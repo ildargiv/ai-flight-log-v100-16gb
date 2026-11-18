@@ -1,0 +1,34 @@
+{
+ "label": "dspine-A",
+ "base": "http://127.0.0.1:8081",
+ "started": "2026-11-18 22:32:28",
+ "cases": [
+  {
+   "case": "short-1k",
+   "prompt_tokens": 886,
+   "completion_tokens": 221,
+   "ttft_s": 7.85,
+   "total_s": 19.69,
+   "prefill_tok_s": 112.9,
+   "decode_tok_s": 18.6
+  },
+  {
+   "case": "medium-8k",
+   "prompt_tokens": 6214,
+   "completion_tokens": 191,
+   "ttft_s": 43.85,
+   "total_s": 53.74,
+   "prefill_tok_s": 141.7,
+   "decode_tok_s": 19.2
+  },
+  {
+   "case": "long-32k",
+   "prompt_tokens": 24359,
+   "completion_tokens": 146,
+   "ttft_s": 177.28,
+   "total_s": 185.03,
+   "prefill_tok_s": 137.4,
+   "decode_tok_s": 18.7
+  }
+ ]
+}

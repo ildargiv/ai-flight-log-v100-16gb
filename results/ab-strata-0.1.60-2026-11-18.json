@@ -1,0 +1,34 @@
+{
+ "label": "strata",
+ "base": "http://127.0.0.1:8080",
+ "started": "2026-11-18 22:30:41",
+ "cases": [
+  {
+   "case": "short-1k",
+   "prompt_tokens": 886,
+   "completion_tokens": 179,
+   "ttft_s": 2.16,
+   "total_s": 4.11,
+   "prefill_tok_s": 410.3,
+   "decode_tok_s": 91.4
+  },
+  {
+   "case": "medium-8k",
+   "prompt_tokens": 6214,
+   "completion_tokens": 233,
+   "ttft_s": 7.14,
+   "total_s": 9.74,
+   "prefill_tok_s": 869.7,
+   "decode_tok_s": 89.3
+  },
+  {
+   "case": "long-32k",
+   "prompt_tokens": 24359,
+   "completion_tokens": 184,
+   "ttft_s": 20.09,
+   "total_s": 22.03,
+   "prefill_tok_s": 1212.5,
+   "decode_tok_s": 94.6
+  }
+ ]
+}

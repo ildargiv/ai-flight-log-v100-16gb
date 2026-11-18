@@ -1,0 +1,10 @@
+Tuning qwen3.8-flash-next-iq3_s (quick); engine .../components/engine/0.1.59-linux-x86_64-cuda-cuda12/strata
+[  0m] Checking your PC before the first measurement  (about 15 min left)
+[  0m] Measuring your current settings  (about 15 min left)
+[  4m] No other setting is worth trying on this PC  (about 9 min left)
+[  4m] Your current settings are already the fastest we found. Nothing was changed.  (about 9 min left)
+
+Your current settings are already the fastest we found. Nothing was changed.
+  Saved as 'iq3_s-262k-v100' so it is not tuned again on reopen.
+
+(наблюдения из worker-лога тюнера, не протокол: prefill 95 891 t ~1.4–1.6K tok/s, decode thinking ~66–75 tok/s, expert cache hit 97.7–99.1%)
