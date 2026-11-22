@@ -1,0 +1,39 @@
+
+
+Loading model... 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b1-8aa2f23
+model      : /home/linux1/models/ninfer/inkling2/Inkling-2-Mini-UD-IQ3_XXS.gguf
+ftype      : IQ3_XXS - 3.0625 bpw
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> Write a short summary of what a GPU is.
+
+[Start thinking]
+
+The user asks for a short summary of what a GPU is. Need answer concise. Need ensure accuracy: GPU = graphics processing unit, specialized electronic circuit designed to rapidly manipulate and alter memory to accelerate creation of images in frame buffer intended for output to display device. Used for graphics rendering, but also general-purpose parallel computing (GPGPU), AI/ML, scientific simulations. Mention parallel architecture vs CPU. Keep short. No need for citations. Final only.
+[End thinking]
+
+A GPU (graphics processing unit) is a specialized processor designed to handle many calculations in parallel, especially for rendering images and video.
+
+[ Prompt: 89.8 t/s | Generation: 35.8 t/s ]
+
+
+Exiting...
