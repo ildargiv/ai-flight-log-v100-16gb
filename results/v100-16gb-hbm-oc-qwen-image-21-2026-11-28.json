@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-28",
+  "hardware": {
+    "gpu": "Tesla V100-SXM2-16GB",
+    "driver": "580.178.04",
+    "os": "Ubuntu 22.04.5",
+    "kernel": "6.8.0-149-generic"
+  },
+  "overclock": {
+    "tool": "FBR RAM Downloader v0.1.2",
+    "tool_repo": "https://github.com/FBR-ROM/FBR-RAM-Downloader",
+    "stock_hbm_mhz": 877.5,
+    "oc_hbm_mhz": 1053.0,
+    "delta_pct": 20.0,
+    "metered": true,
+    "volatile": true
+  },
+  "llm_ab_strata": {
+    "model": "Qwen3.8-Flash-Next GSQ-RCO IQ3_S",
+    "engine": "Strata 0.1.69/0.1.70 stack (as running on host)",
+    "method": "client_http",
+    "note": "Not anchor protocol; quick sanity A/B with memory clock toggled between runs. Single-user, no other GPU load.",
+    "decode_400tok_8pairs": {
+      "oc_1053_pred_tps": {"n": 8, "mean": 59.96, "median": 60.25, "stdev": 1.4, "min": 57.6, "max": 61.7},
+      "stock_877_pred_tps": {"n": 8, "mean": 56.83, "median": 57.8, "stdev": 2.56, "min": 52.7, "max": 59.8},
+      "paired_diff_tps": {"mean": 3.14, "median": 3.05, "stdev": 3.22, "pct_mean": 5.52}
+    },
+    "prefill_1223tok_3pairs": {
+      "oc_1053_prompt_tps": {"n": 3, "mean": 628.67, "median": 626.4, "stdev": 5.37},
+      "stock_877_prompt_tps": {"n": 3, "mean": 619.27, "median": 624.1, "stdev": 10.89},
+      "delta_pct_mean": 1.52
+    },
+    "concurrency_4x200_2pairs": {
+      "oc_1053_r1_agg_tps": 49.4,
+      "stock_877_r1_agg_tps": 47.03,
+      "stock_877_r2_agg_tps": 47.18,
+      "oc_1053_r2": "HTTP 503 / engine crash during uncorrectable ECC event"
+    }
+  },
+  "qwen_image_21_comfyui": {
+    "model": "qwen_image_2.1_int8_convrot.safetensors",
+    "text_encoder": "qwen3.5_9b_qwen_image_2.1_pe_t2i_w4a8.safetensors",
+    "vae": "qwen_image_2.1_vae_bf16.safetensors",
+    "comfyui_version": "0.45.0",
+    "torch": "2.14.1+cu126",
+    "cuda": "12.6",
+    "resolution": "2048x2048",
+    "steps": 20,
+    "cfg": 1.0,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "prompt": "A cute orange tabby cat sitting on a windowsill, soft morning light, photorealistic",
+    "method": "comfyui_history_exec_ms",
+    "stock_ab_v2": [
+      {"name": "lowvram", "flags": ["--lowvram"], "seed": 1001, "ok": true, "exec_ms": 503434},
+      {"name": "lowvram_fp16vae", "flags": ["--lowvram", "--fp16-vae"], "seed": 1003, "ok": true, "exec_ms": 538412},
+      {"name": "lowvram_async_fp16vae_res1", "flags": ["--lowvram", "--async-offload", "--fp16-vae", "--reserve-vram", "1"], "seed": 1002, "ok": true, "exec_ms": 541876},
+      {"name": "auto_fp16vae", "flags": ["--fp16-vae"], "seed": 1004, "ok": true, "exec_ms": 542326}
+    ],
+    "oc_1053_attempt": {
+      "flags": ["--lowvram"],
+      "seed": 2001,
+      "ok": false,
+      "error": "uncorrectable ECC / GPU reset required; ComfyUI died"
+    }
+  },
+  "ecc_events": [
+    {
+      "when": "2026-11-28 LLM concurrency A/B at 1053 MHz",
+      "symptom": "Strata engine reported uncorrectable ECC; HTTP 503 on concurrent request",
+      "after_restore_stock": {"uncorrected_volatile": 1, "uncorrected_aggregate": 1},
+      "reboot_cleared_volatile": true
+    },
+    {
+      "when": "2026-11-28 ComfyUI Qwen Image 2.1 2048x2048 at 1053 MHz",
+      "xid": [48, 171, 63, 154],
+      "dmesg": [
+        "Xid 48: uncorrectable double bit error (DBE) in framebuffer at physAddr 0x21d4ec20 partition 0, subpartition 1",
+        "Xid 171: HBM, Uncorrectable DRAM error in FBPA 0 subpartition 1 physAddr 0x21d4ec20",
+        "Xid 63: Dynamic Page Retirement: New page retired, reboot to activate",
+        "Xid 154: GPU recovery action changed to GPU Reset Required"
+      ],
+      "after_restore_stock": {"uncorrected_volatile": 1, "uncorrected_aggregate": 2},
+      "reboot_cleared_volatile": true
+    }
+  ],
+  "recommendation": "Do not use HBM overclock on this V100 card; keep stock 877.5 MHz."
+}

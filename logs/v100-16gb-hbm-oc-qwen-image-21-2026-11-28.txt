@@ -1,0 +1,57 @@
+# HBM OC + Qwen Image 2.1 test log excerpt (sanitized)
+# Date: 2026-11-28
+# Host/GPU: Tesla V100-SXM2-16GB, driver 580.178.04, Ubuntu 22.04.5, kernel 6.8.0-149-generic
+
+## FBR RAM Downloader v0.1.2
+$ v100-unlock status
+10:00.0 · V100-SXM2-16GB · 877.5 MHz (NDIV 65) · metered 877.5
+
+$ v100-unlock apply
+found V100-SXM2-16GB
+10:00.0 · 877.5 MHz
+10:00.0 · 1053.0 MHz · locked in 0.0 ms
+10:00.0 · metered 1053.0 MHz
+done: hbm 877.5 → 1053.0 MHz (+20%) · 1 card
+
+## LLM Strata A/B (client HTTP, not anchor protocol)
+Decode 400 tok, 8 pairs alternating 1053/877:
+  1053 mean 59.96 tok/s median 60.25 stdev 1.40
+  877  mean 56.83 tok/s median 57.80 stdev 2.56
+  paired diff mean +3.14 tok/s (+5.52%)
+
+Prefill ~1223 tok, 3 pairs:
+  1053 mean 628.67 tok/s
+  877  mean 619.27 tok/s (+1.52%)
+
+Concurrency 4x200 tok:
+  1053 r1 agg 49.40 tok/s
+  877  r1 agg 47.03 tok/s
+  877  r2 agg 47.18 tok/s
+  1053 r2 -> HTTP 503 / engine crash, Strata reported uncorrectable ECC
+
+After restore+reboot: volatile uncorrected 0, aggregate uncorrected 1.
+
+## Qwen Image 2.1 (ComfyUI 0.45.0, torch 2.14.1+cu126, 2048x2048, 20 steps, euler/simple, cfg 1)
+Model: qwen_image_2.1_int8_convrot.safetensors
+Text encoder: qwen3.5_9b_qwen_image_2.1_pe_t2i_w4a8.safetensors
+VAE: qwen_image_2.1_vae_bf16.safetensors
+
+Stock 877.5 MHz A/B v2 (different seeds, cache not reused):
+  lowvram                              seed 1001 exec_ms 503434 ok
+  lowvram+fp16vae                      seed 1003 exec_ms 538412 ok
+  lowvram+async+fp16vae+reserve-vram1  seed 1002 exec_ms 541876 ok
+  auto+fp16vae                         seed 1004 exec_ms 542326 ok
+
+OC 1053 MHz attempt (lowvram, seed 2001):
+  generation did not complete; ComfyUI died.
+
+## dmesg (previous boot, sanitized)
+NVRM: Xid (PCI:0000:10:00): 48, An uncorrectable double bit error (DBE) has been detected on GPU in the framebuffer at physAddr 0x21d4ec20 partition 0, subpartition 1.
+NVRM: Xid (PCI:0000:10:00): 171, HBM, Uncorrectable DRAM error in FBPA 0 subpartition 1 physAddr 0x21d4ec20
+NVRM: Xid (PCI:0000:10:00): 48, pid=<python>, name=python, channel 0x00000010..0x00000017
+NVRM: Xid (PCI:0000:10:00): 63, Dynamic Page Retirement: New page retired, reboot to activate (0x0000000000021d4e).
+NVRM: Xid (PCI:0000:10:00): 154, GPU recovery action changed from 0x0 (None) to 0x1 (GPU Reset Required)
+
+## Post-reboot status
+nvidia-smi: uncorrected volatile 0, uncorrected aggregate 2, clocks.mem 877 MHz
+v100-unlock.service: disabled
